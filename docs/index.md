@@ -1,43 +1,35 @@
-# Rocco J. Davino | Workspace
+# rocjay1 Documentation Hub
 
-Welcome to my portfolio of automated infrastructure, software tools, and GitOps experiments.
+Welcome to the centralized documentation hub for my GitHub workspace. This site serves as a technical index and landing page for my automated infrastructure, software tools, and GitOps experiments.
 
 ---
 
-## :material-briefcase: Portfolio Projects
+## :material-book-open-variant: Technical Documentation
 
-Explore my live projects and documentation sites below.
+Select a project below to view its live site or technical documentation.
 
 <div class="grid cards" markdown>
 
--   :material-file-pdf-box: __Resume-as-Code__
+-   :material-file-account: __Resume-as-Code__
 
     ---
 
     A fully automated GitOps pipeline that renders a professional HTML resume into a GPG-signed PDF artifact.
 
-    [:octicons-arrow-right-24: View Project](https://rocjay1.github.io/rocco-davino-resume/)
+    [:octicons-arrow-right-24: View Project](https://docs.roccosmodernsite.net/rocco-davino-resume/)
 
--   :material-cloud-lock: __Security & Provenance__
-
-    ---
-
-    Integrity verification using SHA-256 checksums and digital identity confirmation via GPG signing.
-
-    [:octicons-shield-check-24: Learn More](https://github.com/rocjay1/rocco-davino-resume#security)
-
--   :material-github: __Source Code__
+-   :material-github: __GitHub Profile__
 
     ---
 
-    Explore the underlying automation and configurations behind these projects.
+    Explore the underlying automation and configurations across all repositories.
 
-    [:octicons-code-24: GitHub Profile](https://github.com/rocjay1)
+    [:octicons-code-24: rocjay1 on GitHub](https://github.com/rocjay1)
 
 </div>
 
 ---
 
-## :material-information-outline: About this Portal
+## :material-information-outline: About this Hub
 
-This site is built with **MkDocs Material** and managed via **uv**. It serves as the unified entry point for all sub-projects hosted under the `rocjay1.github.io` namespace.
+This hub is built with **MkDocs Material** and automatically deployed via GitHub Actions. It is designed to maintain a consistent design system across all sub-projects in the `rocjay1` namespace.
