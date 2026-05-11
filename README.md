@@ -1,4 +1,4 @@
-# Rocco J. Davino - Project Portal
+# rocjay1 Doc Hub Portal
 
 This repository serves as the centralized entry point and "Front Door" for my professional workspace on GitHub Pages.
 
@@ -25,4 +25,4 @@ To preview the portal locally, ensure you have [`uv`](https://docs.astral.sh/uv/
 The deployment is handled by `.github/workflows/deploy.yml`. It orchestrates the Python environment, dependency installation, and site publication to GitHub Pages.
 
 ## Portal URL
-- **Live Portal:** [https://rocjay1.github.io/](https://rocjay1.github.io/)
+- **Live Portal:** [https://docs.roccosmodernsite.net/](https://docs.roccosmodernsite.net/)
