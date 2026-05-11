@@ -26,6 +26,14 @@ Select a project below to view its technical documentation and architectural det
 
 <div class="grid cards" markdown>
 
+-   :material-server-network: __Infrastructure-as-Code__
+
+    ---
+
+    Automated provisioning and management of cloud resources across Azure, GCP, and Cloudflare.
+
+    [:octicons-arrow-right-24: View Docs](https://docs.roccosmodernsite.net/rocjay1-infrastructure/)
+
 -   :material-github: __GitHub Profile__
 
     ---
