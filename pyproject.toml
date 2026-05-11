@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Centralized project portal and entry point for the rocjay1.github.io namespace, built with MkDocs Material."
 readme = "README.md"
 authors = [
-    { name = "Rocco J. Davino", email = "roccodavino@roccosmodernsite.net" }
+    { name = "Rocco Davino", email = "roccodavino@roccosmodernsite.net" }
 ]
 keywords = ["portfolio", "portal", "mkdocs", "material-theme", "github-pages", "gitops"]
 requires-python = ">=3.13"
