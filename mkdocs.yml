@@ -1,11 +1,12 @@
 site_name: rocjay1 Documentation Hub
+site_url: https://docs.roccosmodernsite.net/
+repo_url: https://github.com/rocjay1/rocjay1.github.io
+repo_name: rocjay1.github.io
+
 nav:
   - Home: index.md
   - Onboarding Guide: onboarding.md
   - Live Resume: https://docs.roccosmodernsite.net/rocco-davino-resume/
-site_url: https://docs.roccosmodernsite.net/
-repo_url: https://github.com/rocjay1/rocjay1.github.io
-repo_name: rocjay1.github.io
 
 theme:
   name: material
