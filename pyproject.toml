@@ -1,0 +1,24 @@
+[project]
+name = "rocjay1-github-io"
+version = "0.1.0"
+description = "Centralized project portal and entry point for the rocjay1.github.io namespace, built with MkDocs Material."
+readme = "README.md"
+authors = [
+    { name = "Rocco J. Davino", email = "roccodavino@roccosmodernsite.net" }
+]
+keywords = ["portfolio", "portal", "mkdocs", "material-theme", "github-pages", "gitops"]
+requires-python = ">=3.13"
+dependencies = [
+    "mkdocs-material>=9.7.6",
+]
+
+[tool.uv]
+package = false
+
+[project.urls]
+Repository = "https://github.com/rocjay1/rocjay1.github.io"
+Homepage = "https://rocjay1.github.io/"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

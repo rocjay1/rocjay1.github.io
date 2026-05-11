@@ -1,0 +1,28 @@
+site_name: Rocco J. Davino
+site_url: https://rocjay1.github.io/
+repo_url: https://github.com/rocjay1/rocjay1.github.io
+repo_name: rocjay1.github.io
+
+theme:
+  name: material
+  palette:
+    primary: emerald
+    accent: emerald
+  font:
+    text: Segoe UI
+    code: Roboto Mono
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - content.code.copy
+    - content.code.annotate
+
+extra_css:
+  - stylesheets/extra.css
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences

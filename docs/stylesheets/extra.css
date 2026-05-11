@@ -1,0 +1,26 @@
+:root {
+  --md-primary-fg-color: #10b981;
+  --md-primary-fg-color--light: #34d399;
+  --md-primary-fg-color--dark: #059669;
+  --md-typeset-a-color: #10b981;
+}
+
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color: #10b981;
+}
+
+.md-typeset h1,
+.md-typeset h2 {
+  color: #111827;
+  font-weight: 700;
+}
+
+.md-typeset .grid.cards > ul > li {
+  border-left: 4px solid #10b981;
+  transition: all 0.2s ease-in-out;
+}
+
+.md-typeset .grid.cards > ul > li:hover {
+  background-color: #f3f4f6;
+  transform: translateY(-2px);
+}
