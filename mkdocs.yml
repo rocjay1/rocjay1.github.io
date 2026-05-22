@@ -6,7 +6,6 @@ repo_name: rocjay1.github.io
 nav:
   - Home: index.md
   - Onboarding Guide: onboarding.md
-  - FlareBridge Docs: http://docs.roccosmodernsite.net/FlareBridge/
   - Live Resume: https://docs.roccosmodernsite.net/rocco-davino-resume/
 
 theme:

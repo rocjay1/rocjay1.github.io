@@ -34,6 +34,14 @@ Select a project below to view its technical documentation and architectural det
 
     [:octicons-arrow-right-24: View Docs](https://docs.roccosmodernsite.net/rocjay1-infrastructure/)
 
+-   :material-rss: __FlareBridge__
+
+    ---
+
+    A lightweight RSS and Atom feed aggregator built for seamless content delivery.
+
+    [:octicons-arrow-right-24: View Docs](http://docs.roccosmodernsite.net/FlareBridge/)
+
 -   :material-github: __GitHub Profile__
 
     ---
