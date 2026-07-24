@@ -12,18 +12,16 @@ plugins:
 
 nav:
   - Home: index.md
-  - Technical Notebook: notebook/index.md
-  - Projects: projects.md
-  - Resume: resume.md
+  - Notebook: notebook/index.md
   - About: about.md
 
 theme:
   name: material
   palette:
-    primary: emerald
-    accent: emerald
+    primary: teal
+    accent: teal
   font:
-    text: Segoe UI
+    text: Inter
     code: Roboto Mono
   features:
     - navigation.tabs
