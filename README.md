@@ -1,12 +1,14 @@
-# rocjay1 Doc Hub Portal
+# Rocco Davino's Writing Portal
 
-This repository serves as the centralized entry point and "Front Door" for my professional workspace on GitHub Pages.
+This repository serves as the centralized entry point and personal blog on GitHub Pages.
 
 ## Features
-- **Project Index:** A curated dashboard of my engineering projects, automated pipelines, and documentation.
-- **Consistent Branding:** Synchronized design system (typography, color palette, and layout) across all sub-projects.
+- **Blog Feed:** A clean, minimal, chronologically organized writings space powered by the Material for MkDocs blog plugin.
+- **Flexible Navigation:** Structured layout to support resume and project documentation integration in the future.
 - **MkDocs Powered:** Built with the high-performance [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/) theme.
-- **Automated GitOps:** GitHub Actions automatically builds and deploys the portal to `rocjay1.github.io` on every push.
+- **Security Scanning:** Outfitted with automated GitLeaks scanning on every commit and pull request to check for exposed secrets.
+- **Dependency Management:** Configured with Dependabot to automatically track and update workflows and package dependencies.
+- **Automated GitOps:** GitHub Actions automatically builds and deploys the portal to `docs.roccosmodernsite.net` on every push to `main`.
 
 ## Local Development
 To preview the portal locally, ensure you have [`uv`](https://docs.astral.sh/uv/) installed:
