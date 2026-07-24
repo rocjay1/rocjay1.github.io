@@ -10,7 +10,7 @@ Welcome to the centralized documentation portal for the **rocjay1** namespace.
 
     ---
 
-    My personal writings and knowledge repository covering systems engineering, architecture, and technology solutions.
+    Some personal writings on topics in technology.
 
     [:octicons-arrow-right-24: View Blog](blog/index.md)
 
