@@ -25,4 +25,4 @@ To preview the portal locally, ensure you have [`uv`](https://docs.astral.sh/uv/
 The deployment is handled by `.github/workflows/deploy.yml`. It orchestrates the Python environment, dependency installation, and site publication to GitHub Pages.
 
 ## Portal URL
-- **Live Portal:** [https://docs.roccosmodernsite.net/](https://docs.roccosmodernsite.net/)
+- **Live Portal:** [https://docs.roccosmodernsite.net/](https://docs.roccosmodernsite.net/) (configured with verified custom domain)
