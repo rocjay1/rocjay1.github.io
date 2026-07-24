@@ -1,8 +1,18 @@
-:root {
+:root, [data-md-color-primary] {
   --md-primary-fg-color: #10b981;
   --md-primary-fg-color--light: #34d399;
   --md-primary-fg-color--dark: #059669;
   --md-typeset-a-color: #10b981;
+}
+
+:root, [data-md-color-accent] {
+  --md-accent-fg-color: #10b981;
+  --md-accent-fg-color--light: #34d399;
+  --md-accent-fg-color--dark: #059669;
+}
+
+:root {
+  --md-text-font: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
 }
 
 [data-md-color-scheme="slate"] {
