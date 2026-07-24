@@ -6,13 +6,13 @@ Welcome to the centralized documentation portal for the **rocjay1** namespace.
 
 <div class="grid cards" markdown>
 
--   :material-book-open-page-variant:{ .lg .middle } **Technical Notebook**
+-   :material-post-outline:{ .lg .middle } **Blog**
 
     ---
 
     My personal writings and knowledge repository covering systems engineering, architecture, and technology solutions.
 
-    [:octicons-arrow-right-24: View Notebook](notebook/index.md)
+    [:octicons-arrow-right-24: View Blog](blog/index.md)
 
 </div>
 

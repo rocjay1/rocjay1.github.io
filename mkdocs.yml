@@ -6,13 +6,13 @@ repo_name: rocjay1.github.io
 plugins:
   - search
   - blog:
-      blog_dir: notebook
+      blog_dir: blog
       post_dir: "{blog}/posts"
       archive_date_format: MMMM yyyy
 
 nav:
   - Home: index.md
-  - Notebook: notebook/index.md
+  - Blog: blog/index.md
   - About: about.md
 
 theme:
