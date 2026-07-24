@@ -1,4 +1,4 @@
-site_name: rocjay1 Technical Notes
+site_name: rocjay1 Documentation Portal
 site_url: https://docs.roccosmodernsite.net/
 repo_url: https://github.com/rocjay1/rocjay1.github.io
 repo_name: rocjay1.github.io
@@ -6,15 +6,16 @@ repo_name: rocjay1.github.io
 plugins:
   - search
   - blog:
-      blog_dir: .
-      post_dir: posts
+      blog_dir: notebook
+      post_dir: "{blog}/posts"
       archive_date_format: MMMM yyyy
 
 nav:
-  - Blog: index.md
-  # - About: about.md
-  # - Resume: resume.md
-  # - Projects: projects.md
+  - Home: index.md
+  - Technical Notebook: notebook/index.md
+  - Projects: projects.md
+  - Resume: resume.md
+  - About: about.md
 
 theme:
   name: material
