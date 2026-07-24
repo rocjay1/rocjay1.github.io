@@ -1,8 +1,9 @@
-# Rocco Davino's Writing Portal
+# rocjay1.github.io
 
 This repository serves as the centralized entry point and personal blog on GitHub Pages.
 
 ## Features
+
 - **Blog Feed:** A clean, minimal, chronologically organized writings space powered by the Material for MkDocs blog plugin.
 - **Flexible Navigation:** Structured layout to support resume and project documentation integration in the future.
 - **MkDocs Powered:** Built with the high-performance [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/) theme.
@@ -11,20 +12,27 @@ This repository serves as the centralized entry point and personal blog on GitHu
 - **Automated GitOps:** GitHub Actions automatically builds and deploys the portal to `docs.roccosmodernsite.net` on every push to `main`.
 
 ## Local Development
+
 To preview the portal locally, ensure you have [`uv`](https://docs.astral.sh/uv/) installed:
 
 1. Install dependencies:
+
    ```bash
    uv sync
    ```
+
 2. Serve the site:
+
    ```bash
    uv run mkdocs serve
    ```
+
 3. Open `http://127.0.0.1:8000` in your browser.
 
 ## CI/CD Pipeline
+
 The deployment is handled by `.github/workflows/deploy.yml`. It orchestrates the Python environment, dependency installation, and site publication to GitHub Pages.
 
 ## Portal URL
+
 - **Live Portal:** [https://docs.roccosmodernsite.net/](https://docs.roccosmodernsite.net/) (configured with verified custom domain)
