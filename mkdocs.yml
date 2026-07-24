@@ -1,4 +1,4 @@
-site_name: Rocco Davino
+site_name: rocjay1 Technical Notes
 site_url: https://docs.roccosmodernsite.net/
 repo_url: https://github.com/rocjay1/rocjay1.github.io
 repo_name: rocjay1.github.io
@@ -12,7 +12,7 @@ plugins:
 
 nav:
   - Blog: index.md
-  - About: about.md
+  # - About: about.md
   # - Resume: resume.md
   # - Projects: projects.md
 
