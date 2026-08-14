@@ -241,7 +241,22 @@ reviewable actions.
 
 Containerized services should pin base images by digest, install locked
 production dependencies, run as a non-root user, and maintain a narrow
-`.dockerignore`. Pull-request CI should build the image without pushing it.
+`.dockerignore`. Pull-request CI should build the image without pushing it,
+then execute that finished image in a credential-free acceptance check. The
+check should verify:
+
+- the effective runtime version matches the repository's declared version;
+- the process runs as the intended non-root user;
+- a representative application import or entrypoint executes successfully;
+- package managers, compilers, or other tooling that the runtime-image
+  contract says must be absent are actually unavailable.
+
+A successful build is not sufficient evidence that the image can start. A
+package manager may silently install a fallback runtime, generate an
+inaccessible interpreter link, or leave version-specific build tooling behind.
+Keep the acceptance check narrow: it should validate the artifact without
+requiring production secrets or contacting production services.
+
 Publication should use a commit-derived tag, resolve the pushed artifact to an
 immutable digest, and deploy only that digest.
 
@@ -346,6 +361,9 @@ does not obscure a real platform difference.
       pull requests.
 - [ ] Add application CI with read-only permissions, concurrency, a timeout,
       locked dependencies, and SHA-pinned actions.
+- [ ] For a production container, build and execute the finished image in CI;
+      verify its runtime, non-root identity, application import or entrypoint,
+      and removal of prohibited tooling.
 - [ ] Add Dependabot and secret scanning appropriate to the repository.
 - [ ] If infrastructure is owned here, define the ownership contract before
       authoring Terraform.
