@@ -33,6 +33,12 @@ To preview the portal locally, ensure you have [`uv`](https://docs.astral.sh/uv/
 
 The deployment is handled by `.github/workflows/deploy.yml`. It orchestrates the Python environment, dependency installation, and site publication to GitHub Pages.
 
+## Engineering Standards
+
+The portal also documents the shared repository scaffolding, documentation,
+CI, and deployment conventions used across the `rocjay1` namespace. See
+[`docs/engineering/repository-standards.md`](docs/engineering/repository-standards.md).
+
 ## Portal URL
 
 - **Live Portal:** [https://docs.roccosmodernsite.net/](https://docs.roccosmodernsite.net/) (configured with verified custom domain)
