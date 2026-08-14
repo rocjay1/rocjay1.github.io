@@ -189,8 +189,16 @@ shared Workload Identity provider or foundation bucket is reused. Grant the
 GitHub repository only permission to impersonate its own service account, then
 grant that account only the resource-level permissions required by its root.
 
-Store non-secret coordinates such as project IDs, regions, service-account
-emails, provider IDs, and state-bucket names as GitHub variables. Store
+Commit stable, non-secret Terraform backend coordinates such as state-bucket
+names and prefixes in the backend configuration. This makes the state
+destination reviewable and avoids a mutable CI variable silently selecting a
+different state. Use partial backend configuration only while bootstrap must
+create a not-yet-known destination, then normalize it once that destination is
+stable.
+
+Store other non-secret deployment coordinates such as project IDs, regions,
+service-account emails, and provider IDs as GitHub variables when they vary by
+environment or are intentionally supplied by the deployment boundary. Store
 provider credentials and application secrets in the production environment or
 the cloud secret manager, whichever owns their lifecycle. Pin runtime secret
 references to exact versions when reproducibility or controlled rotation
