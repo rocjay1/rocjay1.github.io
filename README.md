@@ -7,7 +7,8 @@ This repository serves as the centralized entry point and personal blog on GitHu
 - **Blog Feed:** A clean, minimal, chronologically organized writings space powered by the Material for MkDocs blog plugin.
 - **Flexible Navigation:** Structured layout to support resume and project documentation integration in the future.
 - **MkDocs Powered:** Built with the high-performance [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/) theme.
-- **Security Scanning:** Outfitted with automated GitLeaks scanning on every commit and pull request to check for exposed secrets.
+- **Security Scanning:** Outfitted with automated GitLeaks scanning on pull
+  requests, `main` pushes, and a weekly full-history schedule.
 - **Dependency Management:** Configured with Dependabot to automatically track and update workflows and package dependencies.
 - **Automated GitOps:** GitHub Actions automatically builds and deploys the portal to `docs.roccosmodernsite.net` on every push to `main`.
 
@@ -18,7 +19,7 @@ To preview the portal locally, ensure you have [`uv`](https://docs.astral.sh/uv/
 1. Install dependencies:
 
    ```bash
-   uv sync
+   uv sync --locked
    ```
 
 2. Serve the site:

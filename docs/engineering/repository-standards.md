@@ -39,9 +39,20 @@ or deployment owners differ.
 └── uv.lock or package-lock.json
 ```
 
+Treat the tree as a menu, not a required skeleton. Application repositories
+usually have `src/` and `tests/`; infrastructure-only repositories may have no
+root package manager; documentation sites may have no Terraform; and local
+CLI/data pipelines may keep generated operational evidence in dedicated
+ignored directories.
+
 Small repositories may keep the production Terraform root directly in
-`infra/` rather than `infra/production/`. That is acceptable when the root is
-unambiguous and `infra/bootstrap/` remains clearly separate.
+`infra/` rather than `infra/production/`. A service that separates state or
+provider lifecycles may use roots such as `infra/bootstrap`, `infra/gcp`, and
+`infra/cloudflare`. A shared foundation repository may keep documented
+top-level provider roots and does not need to invent a bootstrap root for
+itself. Choose roots by independent state, apply, ownership, and rollback
+boundaries. See [Infrastructure repository architecture](infrastructure-repositories.md)
+for the current ecosystem boundaries.
 
 Add domain-specific directories only when the application needs them. For
 example, the Email bridge has ordered `migrations/`; applied migrations are
@@ -97,6 +108,25 @@ work: directory ownership, validation commands, deployment prohibitions,
 secret exclusions, migration rules, runtime versions, and commit conventions.
 Do not duplicate the entire operator runbook.
 
+## Documentation as code
+
+When a repository contains `mkdocs.yml` or another documentation build:
+
+- Declare and lock the documentation toolchain.
+- Build documentation on pull requests and relevant `main` changes using the
+  strictest supported mode, such as `mkdocs build --strict`.
+- Keep site name, repository name, repository URL, and navigation current.
+- Put deployment, operations, infrastructure-contract, and recovery documents
+  in navigation when operators are expected to find them through the site.
+- Validate repository-relative and cross-repository links.
+- Ignore generated site output.
+
+After extracting or renaming a repository, audit workflows, scripts,
+devcontainers, IDE configuration, documentation metadata and navigation,
+cross-repository links, ownership assertions, and generated/local residue.
+An extraction is not complete while the old repository name or an extracted
+application remains an active local or CI dependency.
+
 ## Continuous integration baseline
 
 Application CI should:
@@ -108,7 +138,9 @@ Application CI should:
 - Pin third-party actions to full commit SHAs, with a version comment where
   useful.
 - Install from the committed lockfile (`npm ci` or `uv sync --locked`).
-- Run the repository's formatter or linter, tests, and type checker.
+- Run locked installation, tests, and every applicable static check. Do not add
+  a formatter, linter, or type checker merely for symmetry when the project has
+  not adopted one.
 - Avoid production credentials and cloud identity.
 
 Path filters are useful for expensive, specialized workflows. The general
@@ -118,13 +150,14 @@ change should prove the application still builds.
 ### Terraform CI
 
 Infrastructure validation belongs in a separate, path-filtered workflow. The
-pattern established by both reviewed repositories is:
+target pattern is:
 
 1. Check `terraform fmt -check -recursive infra`.
 2. Initialize bootstrap and production roots with `-backend=false`.
 3. Run `terraform validate` for each root.
-4. Regenerate provider locks for every supported runner/developer platform and
-   fail if the committed lockfiles change.
+4. Regenerate provider locks for every supported runner/developer platform,
+   then run an explicit dirty-diff check so CI fails if the committed lockfiles
+   change.
 5. Run repository-specific infrastructure policy tests.
 6. On pull requests, create a credential-free speculative production plan
    with refresh and locking disabled.
@@ -139,12 +172,20 @@ clearly, such as exact resource ownership, deletion protection, least-privilege
 IAM, bounded secret retention, immutable image requirements, or protected
 state inventory.
 
+Path filters must include the safety scripts, policy tests, lockfiles, and
+workflow files that influence validation. Pull-request CI must use
+`-backend=false`, placeholders, and no production identity or secrets. A live
+remote-state plan is a distinct production-capable operation and must not be
+presented as ordinary pull-request validation.
+
 ## Continuous delivery baseline
 
 Production infrastructure applies are deliberately separate from pull-request
 validation:
 
 - Trigger with `workflow_dispatch` from `main`.
+- Enforce `github.ref == 'refs/heads/main'` in the production job. A boolean
+  dispatch confirmation is additive and is not a branch guard.
 - Require the GitHub `production` environment.
 - Set `contents: read` and add `id-token: write` only for the deployment job.
 - Authenticate with GitHub OIDC and a repository-specific service account;
@@ -160,6 +201,28 @@ validation:
 Merging a pull request is not equivalent to applying infrastructure. A manual
 dispatch is an independent production decision.
 
+### Multiple production roots
+
+When one workflow owns multiple independently stateful roots, create and
+safety-check every saved plan before applying the first one. Document the
+apply order, cross-root interface, partial-failure behavior, and recovery path.
+Afterward, verify every root independently. Terraform applies across roots are
+not atomic.
+
+### Scheduled production operations
+
+Scheduled drift detection and narrowly controlled maintenance may be valid
+exceptions to manual-only production execution. They must use the production
+environment, repository-specific identity, an explicit timeout, and serialized
+non-cancelling production concurrency.
+
+A scheduled mutation additionally requires an exact saved plan, a narrow
+resource/action allowlist, protected-state checks, and post-operation service
+and persistent-data health verification. Terraform convergence alone does not
+prove that the application or its data boundary is healthy. Drift workflows
+must never apply and should fail visibly on both planning errors and detected
+drift without exposing sensitive plan content.
+
 ### Application delivery stays separate
 
 The deployment mechanism may vary without weakening the common contract:
@@ -173,6 +236,14 @@ The deployment mechanism may vary without weakening the common contract:
 This separation keeps application deployment, database migration, secret
 rotation, state mutation, and infrastructure replacement as independently
 reviewable actions.
+
+### Container delivery
+
+Containerized services should pin base images by digest, install locked
+production dependencies, run as a non-root user, and maintain a narrow
+`.dockerignore`. Pull-request CI should build the image without pushing it.
+Publication should use a commit-derived tag, resolve the pushed artifact to an
+immutable digest, and deploy only that digest.
 
 ## Terraform and identity boundaries
 
@@ -204,6 +275,10 @@ the cloud secret manager, whichever owns their lifecycle. Pin runtime secret
 references to exact versions when reproducibility or controlled rotation
 matters.
 
+Do not commit personal or operator-specific values as Terraform defaults.
+Require them as explicit inputs, store non-secret examples separately, and
+keep secrets out of examples, plans, logs, and command history.
+
 ## Cross-repository baseline
 
 Use these defaults unless a repository documents a reason to diverge:
@@ -221,6 +296,17 @@ Use these defaults unless a repository documents a reason to diverge:
 | Releases | Deploy immutable artifacts where the platform supports them |
 | Verification | Distinguish built, published, applied, and verified states |
 
+Keep runtime declarations consistent across package metadata, version files,
+CI, containers, and deployment platforms. Repository ignores must be portable:
+do not rely on a developer's global Git excludes for `.DS_Store`, virtual
+environments, tool caches, Terraform plans/state, or local secret files.
+
+If a skill or configuration file must be mirrored for more than one consumer,
+declare one canonical source and add a deterministic equality check. For
+security automation, document whether scanning is owned by a committed
+workflow or by a GitHub-native repository setting and make its current status
+verifiable.
+
 ## Observed differences and convergence targets
 
 The reviewed repositories already share the important infrastructure pattern,
@@ -236,7 +322,7 @@ but their scaffolding is not identical:
 | Terraform CI | two-root validation, policy tests, speculative plan | same | retain as the infrastructure baseline |
 | Terraform CD | exact plan, protected-resource gates, apply, drift check | exact plan and apply | add post-apply verification and destructive-plan gates where reliable |
 | Application release | Cloudflare Builds | immutable container publication | document the deployment owner; do not force one mechanism |
-| Dependency/security automation | not part of the reviewed session baseline | not part of the reviewed session baseline | adopt the portal's Dependabot and secret-scan baseline where appropriate |
+| Dependency/security automation | grouped weekly Dependabot | grouped weekly Dependabot | keep ecosystem coverage current and add a verifiable secret-scanning owner |
 
 These differences are not all defects. Converge on the safety and ownership
 contracts first; standardize filenames and workflow presentation when doing so
@@ -248,6 +334,8 @@ does not obscure a real platform difference.
 - [ ] Commit runtime metadata, a lockfile, `.gitignore`, and an explicit license
       decision.
 - [ ] Add focused source and test directories.
+- [ ] If documentation has a build system, lock it and run a strict build in
+      pull requests.
 - [ ] Add application CI with read-only permissions, concurrency, a timeout,
       locked dependencies, and SHA-pinned actions.
 - [ ] Add Dependabot and secret scanning appropriate to the repository.
@@ -255,7 +343,13 @@ does not obscure a real platform difference.
       authoring Terraform.
 - [ ] Separate operator-only bootstrap from production infrastructure.
 - [ ] Add policy tests and a credential-free pull-request plan.
+- [ ] Ensure CI path filters include every safety script, policy test, lockfile,
+      and workflow that influences the result.
 - [ ] Keep production identity and secrets out of pull requests.
+- [ ] For multiple production roots, plan and gate all roots before applying
+      any root.
+- [ ] Give scheduled production mutations an allowlist and application/data
+      health verification.
 - [ ] Document the application deployer, infrastructure deployer, migrations,
       verification, rollback, and destructive stop conditions.
 - [ ] Run the local commands from the README and the same checks CI will run.
