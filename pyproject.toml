@@ -3,6 +3,7 @@ name = "rocjay1-github-io"
 version = "1.0.0"
 description = "Centralized project portal and entry point for the rocjay1.github.io namespace, built with MkDocs Material."
 readme = "README.md"
+license = "MIT"
 requires-python = ">=3.13"
 dependencies = [
     "mkdocs>=1.6.1",
