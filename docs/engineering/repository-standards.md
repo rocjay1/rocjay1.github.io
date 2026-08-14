@@ -304,7 +304,7 @@ Use these defaults unless a repository documents a reason to diverge:
 | Runtimes | Declare the supported version and commit the dependency lockfile |
 | GitHub Actions | Pin third-party actions to full SHAs |
 | Permissions | Declare the smallest workflow or job permissions explicitly |
-| Dependencies | Weekly Dependabot updates for the ecosystems in use; group routine minor/patch updates by lifecycle |
+| Dependencies | Weekly Dependabot updates; group minor/patch updates per lifecycle and keep majors separate |
 | Secret scanning | Pull-request and `main` scanning, plus a scheduled full-history scan when appropriate |
 | Generated/local files | Ignore virtual environments, dependencies, build output, Terraform working data, plans, state, and local secret files |
 | Infrastructure | Format, validate, policy-test, and plan before apply |
@@ -322,13 +322,81 @@ security automation, document whether scanning is owned by a committed
 workflow or by a GitHub-native repository setting and make its current status
 verifiable.
 
-Keep dependency updates reviewable. Group related minor and patch updates
-within one lifecycle, such as application, documentation, container, or
-Terraform dependencies. Leave major updates as separate pull requests so their
-migration and live-validation requirements are explicit. Do not combine an
-application runtime upgrade with a production-provider upgrade merely to reduce
-pull-request count. Validate `.github/dependabot.yml` through Dependabot itself;
-a successful YAML parse does not prove that GitHub accepts the option layout.
+### Dependabot configuration
+
+Commit `.github/dependabot.yml` in every maintained repository. Configure one
+weekly update entry for GitHub Actions and one entry for each package ecosystem
+and lifecycle actually present in the repository. Use the native updater for
+the committed lockfile: for example, `npm` for `package-lock.json`, `uv` for
+`uv.lock`, `docker` for a `Dockerfile`, and `terraform` for Terraform roots.
+
+Use these grouping rules:
+
+- Put all routine GitHub Actions minor and patch updates in a stable
+  `github-actions` group.
+- Group minor and patch updates within each repository lifecycle, such as
+  application, documentation, container, or Terraform dependencies.
+- Keep major updates as individual pull requests so migrations, compatibility
+  checks, and live-validation requirements remain explicit.
+- Do not combine ecosystems merely to reduce pull-request count. A runtime
+  upgrade and a production-provider upgrade have different failure and rollback
+  boundaries even when both are maintained in the same repository.
+- Use `build(deps)` as the Dependabot commit-message prefix so generated commits
+  and pull-request titles follow the Conventional Commits baseline.
+
+Cover every manifest location. Use `directory: "/"` for GitHub Actions and
+root-level package managers. Use `directories` to enumerate all independently
+maintained Terraform or monorepo roots; adding a new root is incomplete until
+Dependabot covers it. Keep group identifiers stable and descriptive because
+they appear in generated branch names and pull-request titles.
+
+A repository with npm application dependencies and two Terraform roots should
+follow this shape:
+
+```yaml
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      github-actions:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+    commit-message:
+      prefix: "build(deps)"
+
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      npm-dependencies:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+    commit-message:
+      prefix: "build(deps)"
+
+  - package-ecosystem: "terraform"
+    directories:
+      - "/infra/bootstrap"
+      - "/infra/production"
+    schedule:
+      interval: "weekly"
+    groups:
+      terraform-dependencies:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+    commit-message:
+      prefix: "build(deps)"
+```
+
+Adapt the ecosystems, group names, and directories to the repository rather
+than retaining unused template entries. Validate the file as YAML before
+publication, but treat GitHub's successful Dependabot processing on the default
+branch as the acceptance check; a successful YAML parse does not prove that
+GitHub accepts the option layout or can resolve every manifest.
 
 ## Observed differences and convergence targets
 
@@ -364,7 +432,12 @@ does not obscure a real platform difference.
 - [ ] For a production container, build and execute the finished image in CI;
       verify its runtime, non-root identity, application import or entrypoint,
       and removal of prohibited tooling.
-- [ ] Add Dependabot and secret scanning appropriate to the repository.
+- [ ] Add weekly Dependabot entries for GitHub Actions and every native package
+      ecosystem; group minor/patch updates per lifecycle and keep majors
+      separate.
+- [ ] Confirm GitHub accepts the Dependabot configuration and recognizes every
+      intended manifest directory.
+- [ ] Add secret scanning appropriate to the repository.
 - [ ] If infrastructure is owned here, define the ownership contract before
       authoring Terraform.
 - [ ] Separate operator-only bootstrap from production infrastructure.
