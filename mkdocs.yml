@@ -12,6 +12,8 @@ plugins:
 
 nav:
   - Home: index.md
+  - Engineering:
+      - Repository standards: engineering/repository-standards.md
   - Blog: blog/index.md
   - About: about.md
 
