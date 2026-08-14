@@ -22,6 +22,14 @@ Welcome to the centralized documentation portal for the **rocjay1** namespace.
 
     [:octicons-arrow-right-24: View Standards](engineering/repository-standards.md)
 
+-   :material-server-network:{ .lg .middle } **Infrastructure architecture**
+
+    ---
+
+    Ownership boundaries for core infrastructure and independently deployed applications.
+
+    [:octicons-arrow-right-24: View Architecture](engineering/infrastructure-repositories.md)
+
 </div>
 
 ---

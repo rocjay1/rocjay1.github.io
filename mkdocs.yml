@@ -14,6 +14,7 @@ nav:
   - Home: index.md
   - Engineering:
       - Repository standards: engineering/repository-standards.md
+      - Infrastructure repositories: engineering/infrastructure-repositories.md
   - Blog: blog/index.md
   - About: about.md
 
