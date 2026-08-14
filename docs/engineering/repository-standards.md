@@ -289,7 +289,7 @@ Use these defaults unless a repository documents a reason to diverge:
 | Runtimes | Declare the supported version and commit the dependency lockfile |
 | GitHub Actions | Pin third-party actions to full SHAs |
 | Permissions | Declare the smallest workflow or job permissions explicitly |
-| Dependencies | Weekly Dependabot updates for the ecosystems in use |
+| Dependencies | Weekly Dependabot updates for the ecosystems in use; group routine minor/patch updates by lifecycle |
 | Secret scanning | Pull-request and `main` scanning, plus a scheduled full-history scan when appropriate |
 | Generated/local files | Ignore virtual environments, dependencies, build output, Terraform working data, plans, state, and local secret files |
 | Infrastructure | Format, validate, policy-test, and plan before apply |
@@ -306,6 +306,14 @@ declare one canonical source and add a deterministic equality check. For
 security automation, document whether scanning is owned by a committed
 workflow or by a GitHub-native repository setting and make its current status
 verifiable.
+
+Keep dependency updates reviewable. Group related minor and patch updates
+within one lifecycle, such as application, documentation, container, or
+Terraform dependencies. Leave major updates as separate pull requests so their
+migration and live-validation requirements are explicit. Do not combine an
+application runtime upgrade with a production-provider upgrade merely to reduce
+pull-request count. Validate `.github/dependabot.yml` through Dependabot itself;
+a successful YAML parse does not prove that GitHub accepts the option layout.
 
 ## Observed differences and convergence targets
 
