@@ -14,6 +14,7 @@ nav:
   - Home: index.md
   - Engineering:
       - Repository standards: engineering/repository-standards.md
+      - CI/CD trust model: engineering/ci-cd.md
       - Infrastructure repositories: engineering/infrastructure-repositories.md
   - Blog: blog/index.md
   - About: about.md
