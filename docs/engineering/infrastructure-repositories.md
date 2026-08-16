@@ -19,12 +19,26 @@ reviewed cross-repository interface; it does not read the reading-stack state.
 The reading stack owns its tunnel and application DNS records. The email
 bridge owns its Worker and routing rule.
 
+An opaque value shared across repositories—such as a verification header or
+origin token—is a versioned interface even when both repositories use the same
+secret name. Document its producer, consumers, rotation order, rollback owner,
+and downstream acceptance check. During rotation, compare one-way fingerprints
+without printing the value, update every owner in a coordinated change, and
+verify a fresh provider-side health signal. Name equality is not evidence that
+the stored values match.
+
 All GitHub Actions deployments authenticate through the shared Workload
 Identity pool using immutable GitHub repository IDs. Each application has a
 repository-specific deployment identity and may manage only its declared
 project resources and state. Operator-only bootstrap roots create projects,
 state buckets, and deployment identities; production workflows do not apply
 bootstrap state.
+
+Provider credentials are repository- and stage-specific. Keep read-only
+planning credentials separate from deployment credentials, store them in the
+owning GitHub environment, and do not preserve a broad shared token as a
+repository-level fallback. A rotation is complete only after the replacement
+passes the protected workflow and the retired credential is no longer used.
 
 ## Change rule
 

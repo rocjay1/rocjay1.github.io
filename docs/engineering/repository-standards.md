@@ -1,10 +1,10 @@
 # Repository scaffolding and CI/CD standards
 
 This is the reference pattern for repositories in the `rocjay1` namespace. It
-was distilled from the standalone Email-to-RSS Bridge and Garmin Connect MCP
-work completed in Codex sessions
-`019ffd30-0e72-71f2-9daa-52d56720e4db` and
-`019ff75e-8ad4-7091-804d-d4e9b93f9d9d`.
+was distilled from the standalone
+[Email-to-RSS Bridge](https://github.com/rocjay1/email-to-rss-bridge) and
+[Garmin Connect MCP](https://github.com/rocjay1/garmin-connect-mcp), then
+expanded as additional repositories adopted the shared boundaries.
 
 The goal is consistency at the boundaries that affect maintenance, security,
 and deployment. Repositories do not need identical files when their runtimes
@@ -20,7 +20,7 @@ or deployment owners differ.
 │       ├── application-ci.yml         # application validation
 │       ├── terraform-ci.yml           # infrastructure validation, if used
 │       ├── terraform-cd.yml           # guarded production apply, if used
-│       └── publish-image.yml           # container publication, if used
+│       └── publish-image.yml          # container publication, if used
 ├── docs/
 │   ├── deployment.md                  # deployment ownership and release flow
 │   ├── infrastructure-contract.md     # repository and shared-system boundary
@@ -28,13 +28,13 @@ or deployment owners differ.
 ├── infra/
 │   ├── bootstrap/                     # operator-only state and identity root
 │   └── production/                    # application infrastructure root
-├── scripts/                            # narrow, repeatable operator helpers
-├── src/                                # application source
-├── tests/                              # behavior and policy tests
-├── AGENTS.md                           # repository-specific agent guardrails
+├── scripts/                           # narrow, repeatable operator helpers
+├── src/                               # application source
+├── tests/                             # behavior and policy tests
+├── AGENTS.md                          # repository-specific agent guardrails
 ├── LICENSE
 ├── README.md
-├── Dockerfile                          # only for containerized services
+├── Dockerfile                         # only for containerized services
 ├── pyproject.toml or package.json
 └── uv.lock or package-lock.json
 ```
@@ -135,8 +135,8 @@ Application CI should:
 - Default to `permissions: contents: read`.
 - Cancel superseded runs for the same branch or pull request.
 - Use a bounded job timeout.
-- Pin third-party actions to full commit SHAs, with a version comment where
-  useful.
+- Pin all externally sourced actions to full commit SHAs, with a version comment
+  where useful.
 - Install from the committed lockfile (`npm ci` or `uv sync --locked`).
 - Run locked installation, tests, and every applicable static check. Do not add
   a formatter, linter, or type checker merely for symmetry when the project has
@@ -159,13 +159,19 @@ target pattern is:
    then run an explicit dirty-diff check so CI fails if the committed lockfiles
    change.
 5. Run repository-specific infrastructure policy tests.
-6. On pull requests, create a credential-free speculative production plan
-   with refresh and locking disabled.
+6. When configuration permits, create a credential-free speculative production
+   plan on pull requests with refresh and locking disabled.
 
 The speculative plan must use syntactically valid placeholders, omit the
 remote backend, and receive no OIDC identity, remote-state access, or real
 provider secrets. It proves configuration shape; it is not evidence of current
 production state.
+
+Some provider data sources and remote-state dependencies require live read
+access during planning. Keep ordinary pull-request validation credential-free;
+run any live preview from trusted `main` code with a separate read-only planning
+identity. See [CI/CD trust and environment model](ci-cd.md) for the complete
+pipeline and identity boundaries.
 
 Policy tests should encode invariants that Terraform alone cannot express
 clearly, such as exact resource ownership, deletion protection, least-privilege
@@ -186,20 +192,30 @@ validation:
 - Trigger with `workflow_dispatch` from `main`.
 - Enforce `github.ref == 'refs/heads/main'` in the production job. A boolean
   dispatch confirmation is additive and is not a branch guard.
-- Require the GitHub `production` environment.
+- Require a GitHub `production` environment restricted to `main`; configure
+  required reviewers, self-review, and bypass rules to match the repository's
+  actual approval model.
 - Set `contents: read` and add `id-token: write` only for the deployment job.
 - Authenticate with GitHub OIDC and a repository-specific service account;
   do not store cloud service-account keys.
 - Serialize production applies and do not cancel an apply in progress.
 - Validate required inputs before authentication or planning.
-- Create a fresh saved plan, review it through automated safety gates, and
-  apply that exact plan file.
+- Create a fresh saved plan inside the gated production job, review it through
+  automated safety gates, and apply that exact plan file in the same job.
 - Fail closed on deletion or replacement of protected resources.
 - Finish with a drift check when the provider and service support a reliable
   immediate post-apply plan.
 
 Merging a pull request is not equivalent to applying infrastructure. A manual
 dispatch is an independent production decision.
+
+When a repository uses a separate read-only live preview, require a successful
+preview for the same `main` commit before production dispatch. Do not pass an
+unencrypted saved plan through ordinary workflow artifacts; plans can contain
+state and sensitive values. The production job must re-plan, compare the safe
+action inventory with the preview, and stop for a new review if it materially
+changed. The detailed model is defined in
+[CI/CD trust and environment model](ci-cd.md).
 
 ### Multiple production roots
 
@@ -260,6 +276,13 @@ requiring production secrets or contacting production services.
 Publication should use a commit-derived tag, resolve the pushed artifact to an
 immutable digest, and deploy only that digest.
 
+For Cloud Run services, use a health endpoint that does not end in `z`, such as
+`/health`. Cloud Run reserves some paths ending in `z` and recommends avoiding
+all of them. Keep the application route, startup/readiness probes, tests, and
+post-deploy acceptance check on the same safe path. When diagnosing a platform
+404, confirm whether the request reached container logs and test a non-reserved
+path before changing application code or invocation IAM.
+
 ## Terraform and identity boundaries
 
 For repositories that own cloud infrastructure, prefer two roots:
@@ -270,10 +293,22 @@ For repositories that own cloud infrastructure, prefer two roots:
 - **Production root:** owns only the application's declared resources. It uses
   the dedicated backend and repository-specific identity.
 
-Keep state buckets and deployment identities repository-specific even when a
-shared Workload Identity provider or foundation bucket is reused. Grant the
-GitHub repository only permission to impersonate its own service account, then
-grant that account only the resource-level permissions required by its root.
+Keep state buckets and identities repository-specific even when a shared
+Workload Identity provider or foundation bucket is reused. A repository that
+needs a live production preview should use separate planning and deployment
+identities: the planning identity reads only the repository's state and
+required resource metadata, while the deployment identity retains only the
+read/write permissions required by its roots. The planning identity must not
+write state, mutate resources, change IAM, read unnecessary secret payloads, or
+impersonate the deployment identity.
+
+The bootstrap boundary must create federation trust and the IAM bindings that
+authorize CI; the workflow being authorized must not manage those controls.
+Treat a correct permission denial as evidence of the boundary, not a reason to
+grant the workflow project-wide IAM administration. For remote state, validate
+the provider's actual read calls: object read/list permissions may need a
+narrow bucket metadata permission such as `storage.buckets.get`, while object
+write/delete, IAM mutation, and impersonation remain denied.
 
 Commit stable, non-secret Terraform backend coordinates such as state-bucket
 names and prefixes in the backend configuration. This makes the state
@@ -290,9 +325,57 @@ the cloud secret manager, whichever owns their lifecycle. Pin runtime secret
 references to exact versions when reproducibility or controlled rotation
 matters.
 
+Keep provider credentials specific to both repository and stage. Separate
+`production-read` from `production`, avoid repository-level fallback secrets,
+and rotate by proving the replacement through protected apply, service
+acceptance, and no drift before retiring the old credential.
+
 Do not commit personal or operator-specific values as Terraform defaults.
 Require them as explicit inputs, store non-secret examples separately, and
 keep secrets out of examples, plans, logs, and command history.
+
+## GCP budget and cost ownership
+
+Every GCP project must have an explicit budget decision when it is created and
+before it incurs billable use. The repository that owns the project also owns
+its project-scoped budget, notification path, verification, and response
+procedure. Shared foundation infrastructure must not silently own application
+budgets; it owns the budget for its own management project.
+
+Commit the stable, non-secret decision in Terraform:
+
+- a specified amount and calendar period, normally a monthly USD amount;
+- project scope by default, with service filters only when the ownership and
+  unmonitored remainder are explicitly understood;
+- actual-spend thresholds that provide early, near-limit, and at-limit warning,
+  such as 50%, 80% or 90%, and 100%;
+- a 100% forecasted-spend threshold when the budget period supports it;
+- a named notification channel and accountable recipient;
+- the operational response at each threshold, including who may accept higher
+  spend, reduce usage, or stop a service.
+
+A service-filtered budget does not satisfy the project requirement unless the
+repository documents why all other project spend is zero, separately budgeted,
+or intentionally accepted.
+
+The budget amount is a reviewed operating decision, not a mutable CI default.
+Changes to it require the same review as other production policy changes. Keep
+the billing-account identifier and notification recipient in the repository's
+established sensitive or environment-specific configuration boundary.
+
+An alerts-only Cloud Billing budget does not cap usage or spending. Treat an
+automated billing disablement, quota reduction, or supported spend cap as a
+separate availability-affecting control with an explicit owner, recovery path,
+and acceptance test. See
+[Google Cloud budget behavior](https://docs.cloud.google.com/billing/docs/how-to/budgets).
+
+Bootstrap may establish the minimum permission needed to manage the budget,
+but the application infrastructure root should own the budget resource. Scope
+it to the exact project and prevent the repository identity from managing
+unrelated project budgets wherever the platform permits. Policy tests should
+verify the project filter, amount, thresholds, and notification configuration.
+After apply, inspect the live budget and confirm alerts reach the intended
+recipient; Terraform convergence alone does not prove notification delivery.
 
 ## Cross-repository baseline
 
@@ -302,10 +385,12 @@ Use these defaults unless a repository documents a reason to diverge:
 | --- | --- |
 | Commits | Conventional Commits; imperative summary of 72 characters or fewer |
 | Runtimes | Declare the supported version and commit the dependency lockfile |
-| GitHub Actions | Pin third-party actions to full SHAs |
+| GitHub Actions | Pin all externally sourced actions to full SHAs |
 | Permissions | Declare the smallest workflow or job permissions explicitly |
+| Credentials | Scope provider credentials by repository and protected stage; rotate with verified overlap |
 | Dependencies | Weekly Dependabot updates; group minor/patch updates per lifecycle and keep majors separate |
 | Secret scanning | Pull-request and `main` scanning, plus a scheduled full-history scan when appropriate |
+| GCP cost ownership | Every project has a committed budget amount, thresholds, notification owner, and response procedure |
 | Generated/local files | Ignore virtual environments, dependencies, build output, Terraform working data, plans, state, and local secret files |
 | Infrastructure | Format, validate, policy-test, and plan before apply |
 | Releases | Deploy immutable artifacts where the platform supports them |
@@ -432,6 +517,8 @@ does not obscure a real platform difference.
 - [ ] For a production container, build and execute the finished image in CI;
       verify its runtime, non-root identity, application import or entrypoint,
       and removal of prohibited tooling.
+- [ ] For Cloud Run, use a health path that does not end in `z` and align the
+      route, probes, tests, and post-deploy verification.
 - [ ] Add weekly Dependabot entries for GitHub Actions and every native package
       ecosystem; group minor/patch updates per lifecycle and keep majors
       separate.
@@ -440,15 +527,34 @@ does not obscure a real platform difference.
 - [ ] Add secret scanning appropriate to the repository.
 - [ ] If infrastructure is owned here, define the ownership contract before
       authoring Terraform.
+- [ ] For every owned GCP project, commit the decided budget, thresholds, alert
+      recipient, and threshold-response procedure; verify the live budget and
+      notification path.
 - [ ] Separate operator-only bootstrap from production infrastructure.
-- [ ] Add policy tests and a credential-free pull-request plan.
+- [ ] Keep federation trust and its authorizing IAM bindings outside the
+      workflow they authorize; test required reads and representative denied
+      mutations.
+- [ ] Add policy tests and a credential-free pull-request plan where the
+      configuration permits one; otherwise keep PR validation credential-free
+      and use a trusted read-only live preview.
 - [ ] Ensure CI path filters include every safety script, policy test, lockfile,
       and workflow that influences the result.
 - [ ] Keep production identity and secrets out of pull requests.
+- [ ] Scope provider credentials by repository and protected stage; verify the
+      replacement before retiring an old credential.
+- [ ] If live planning needs production access, separate the read-only planning
+      identity from the read/write deployment identity and test the denied
+      permissions.
+- [ ] Restrict production jobs in both workflow conditions and GitHub
+      environment deployment-branch rules.
 - [ ] For multiple production roots, plan and gate all roots before applying
       any root.
 - [ ] Give scheduled production mutations an allowlist and application/data
       health verification.
+- [ ] Run post-apply checks from a vantage that traverses the real edge policy;
+      require fresh, bounded evidence without weakening WAF or bot controls.
+- [ ] For sensitive authenticated services, verify the exact interface and a
+      minimal real operation without recording sensitive payloads.
 - [ ] Document the application deployer, infrastructure deployer, migrations,
       verification, rollback, and destructive stop conditions.
 - [ ] Run the local commands from the README and the same checks CI will run.
