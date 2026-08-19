@@ -2,12 +2,6 @@ name: Deploy Root Portal
 
 on:
   pull_request:
-    paths:
-      - ".github/workflows/deploy.yml"
-      - "docs/**"
-      - "mkdocs.yml"
-      - "pyproject.toml"
-      - "uv.lock"
   push:
     branches:
       - main

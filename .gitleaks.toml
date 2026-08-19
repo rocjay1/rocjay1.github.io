@@ -1,6 +1,2 @@
 [extend]
 useDefault = true
-
-[allowlist]
-description = "Ignore known false positives"
-regexes = []
