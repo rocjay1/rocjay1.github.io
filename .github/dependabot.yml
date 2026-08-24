@@ -10,10 +10,12 @@ multi-ecosystem-groups:
 updates:
   - package-ecosystem: "github-actions"
     directory: "/"
+    assignees: ["rocjay1"]
     patterns: ["*"]
     multi-ecosystem-group: "repository-dependencies"
 
   - package-ecosystem: "uv"
     directory: "/"
+    assignees: ["rocjay1"]
     patterns: ["*"]
     multi-ecosystem-group: "repository-dependencies"
