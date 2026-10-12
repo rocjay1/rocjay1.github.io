@@ -1,10 +1,12 @@
 # Repository scaffolding and CI/CD standards
 
 This is the reference pattern for repositories in the `rocjay1` namespace. It
-was distilled from the standalone
+was originally distilled from the standalone
 [Email-to-RSS Bridge](https://github.com/rocjay1/email-to-rss-bridge) and
-[Garmin Connect MCP](https://github.com/rocjay1/garmin-connect-mcp), then
-expanded as additional repositories adopted the shared boundaries.
+[Garmin Connect MCP](https://github.com/rocjay1/garmin-connect-mcp) repositories,
+both now archived, then expanded as additional repositories adopted the shared
+boundaries. The archived repositories remain historical sources only; they are
+not maintained examples.
 
 The goal is consistency at the boundaries that affect maintenance, security,
 and deployment. Repositories do not need identical files when their runtimes
@@ -55,8 +57,8 @@ boundaries. See [Infrastructure repository architecture](infrastructure-reposito
 for the current ecosystem boundaries.
 
 Add domain-specific directories only when the application needs them. For
-example, the Email bridge has ordered `migrations/`; applied migrations are
-immutable and new changes receive the next sequence number.
+example, a repository with a relational store keeps ordered `migrations/`;
+applied migrations are immutable and new changes receive the next sequence number.
 
 ## What each document owns
 
@@ -485,10 +487,12 @@ GitHub accepts the option layout or can resolve every manifest.
 
 ## Observed differences and convergence targets
 
-The reviewed repositories already share the important infrastructure pattern,
-but their scaffolding is not identical:
+The two source repositories, both now archived, shared the important
+infrastructure pattern but differed in scaffolding. The comparison is kept as
+historical evidence for the convergence targets, which still apply to new and
+active repositories:
 
-| Area | Email-to-RSS Bridge | Garmin Connect MCP | Convergence target |
+| Area | Email-to-RSS Bridge (archived) | Garmin Connect MCP (archived) | Convergence target |
 | --- | --- | --- | --- |
 | README | concise entry point with docs links | detailed product, auth, and privacy overview | both are valid; keep procedures in `/docs` |
 | Operations docs | operations, deployment, and infrastructure contract | consolidated operations runbook | split only when ownership becomes difficult to scan |
