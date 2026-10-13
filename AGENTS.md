@@ -5,8 +5,7 @@ Pages.
 
 ## Repository structure
 
-- `docs/` contains authored documentation and blog posts.
-- `docs/engineering/` contains cross-repository architecture and standards.
+- `docs/` contains authored documentation.
 - `mkdocs.yml` owns navigation, theme, plugins, and Markdown extensions.
 - `pyproject.toml` and `uv.lock` own the reproducible documentation toolchain.
 - `site/` is generated output and must not be committed.
