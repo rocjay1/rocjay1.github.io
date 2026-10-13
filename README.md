@@ -1,11 +1,9 @@
 # rocjay1.github.io
 
-This repository serves as the centralized entry point and personal blog on GitHub Pages.
+This repository serves as the documentation portal for the `rocjay1` repositories, published with GitHub Pages.
 
 ## Features
 
-- **Blog Feed:** A clean, minimal, chronologically organized writings space powered by the Material for MkDocs blog plugin.
-- **Flexible Navigation:** Structured layout to support resume and project documentation integration in the future.
 - **MkDocs Powered:** Built with the high-performance [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/) theme.
 - **Security Scanning:** Outfitted with automated GitLeaks scanning on pull
   requests, `main` pushes, and a weekly full-history schedule.
@@ -33,12 +31,6 @@ To preview the portal locally, ensure you have [`uv`](https://docs.astral.sh/uv/
 ## CI/CD Pipeline
 
 The deployment is handled by `.github/workflows/deploy.yml`. It orchestrates the Python environment, dependency installation, and site publication to GitHub Pages.
-
-## Engineering Standards
-
-The portal also documents the shared repository scaffolding, documentation,
-CI, and deployment conventions used across the `rocjay1` namespace. See
-[`docs/engineering/repository-standards.md`](docs/engineering/repository-standards.md).
 
 ## Portal URL
 
