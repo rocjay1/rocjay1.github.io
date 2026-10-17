@@ -1,9 +1,10 @@
+# Managed by rocjay1/github-settings (dependabot.sh). Edit it there; changes here get overwritten.
 version: 2
 
 multi-ecosystem-groups:
-  repository-dependencies:
+  monthly:
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     commit-message:
       prefix: "build(deps)"
 
@@ -12,10 +13,14 @@ updates:
     directory: "/"
     assignees: ["rocjay1"]
     patterns: ["*"]
-    multi-ecosystem-group: "repository-dependencies"
+    multi-ecosystem-group: "monthly"
+    cooldown:
+      default-days: 7
 
   - package-ecosystem: "uv"
     directory: "/"
     assignees: ["rocjay1"]
     patterns: ["*"]
-    multi-ecosystem-group: "repository-dependencies"
+    multi-ecosystem-group: "monthly"
+    cooldown:
+      default-days: 7
