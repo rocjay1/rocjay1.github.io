@@ -14,9 +14,10 @@ concurrency:
   cancel-in-progress: true
 
 # Shared gitleaks scan from rocjay1/github-settings. Reports as "secrets / secrets".
+# Pinned to an immutable release tag, so the tag can't move.
 jobs:
   secrets:
     permissions:
       contents: read
       pull-requests: read
-    uses: rocjay1/github-settings/.github/workflows/secret-scan.yml@64b56bf3ea4286ae694ac6b2d8ed983b0c07f3f9 # reusable-workflows (rocjay1/github-settings#4)
+    uses: rocjay1/github-settings/.github/workflows/secret-scan.yml@v1.0.0
