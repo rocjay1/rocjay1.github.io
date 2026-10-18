@@ -1,4 +1,4 @@
-# Managed by rocjay1/github-settings (workflows.sh). Edit it there; changes here get overwritten.
+# Managed by rocjay1/github-settings (workflows.py). Edit it there; changes here get overwritten.
 name: Shared checks
 
 on:
