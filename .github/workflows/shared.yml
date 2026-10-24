@@ -87,6 +87,10 @@ jobs:
                   "*": hash-pin
                   # Immutable release tags; see the header of this workflow.
                   "rocjay1/github-settings/*": ref-pin
+            # Lists rocjay1/github-settings' branches, which the caller's token can't
+            # read while it's private. Everything else is hash-pinned.
+            ref-confusion:
+              disable: true
           YAML
             args=(--config "${default}")
           fi
